@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "./Movies.css";
 import LoadingScreen from "./LoadingScreen";
@@ -19,7 +19,6 @@ export default function Movies() {
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];
 
-  // Fetch genres on first load
   useEffect(() => {
     async function fetchGenres() {
       const res = await fetch(
@@ -31,46 +30,48 @@ export default function Movies() {
     fetchGenres();
   }, []);
 
-  // Fetch movies initially and on filter change
+  const fetchMovies = useCallback(
+    async (reset = false) => {
+      setLoading(true);
+      try {
+        const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
+        const yearParam = selectedYear ? `&primary_release_year=${selectedYear}` : "";
+
+        const res = await fetch(
+          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=primary_release_date.desc&page=${
+            reset ? 1 : page
+          }${genreParam}${yearParam}&vote_count.gte=500&primary_release_date.lte=${todayStr}`
+        );
+        const data = await res.json();
+
+        const filtered = data.results.filter(
+          (movie) =>
+            movie.release_date &&
+            new Date(movie.release_date) <= today &&
+            movie.poster_path
+        );
+
+        if (reset) {
+          setMovies(filtered);
+          setPage(2);
+        } else {
+          setMovies((prev) => [...prev, ...filtered]);
+          setPage((prev) => prev + 1);
+        }
+
+        setHasMore(data.page < data.total_pages);
+      } catch (error) {
+        console.error("Failed to fetch movies:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedGenre, selectedYear, page, todayStr, today]
+  );
+
   useEffect(() => {
     fetchMovies(true);
-  }, [selectedGenre, selectedYear]);
-
-  const fetchMovies = async (reset = false) => {
-    setLoading(true);
-    try {
-      const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
-      const yearParam = selectedYear ? `&primary_release_year=${selectedYear}` : "";
-
-      const res = await fetch(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=primary_release_date.desc&page=${
-          reset ? 1 : page
-        }${genreParam}${yearParam}&vote_count.gte=500&primary_release_date.lte=${todayStr}`
-      );
-      const data = await res.json();
-
-      const filtered = data.results.filter(
-        (movie) =>
-          movie.release_date &&
-          new Date(movie.release_date) <= today &&
-          movie.poster_path
-      );
-
-      if (reset) {
-        setMovies(filtered);
-        setPage(2);
-      } else {
-        setMovies((prev) => [...prev, ...filtered]);
-        setPage((prev) => prev + 1);
-      }
-
-      setHasMore(data.page < data.total_pages);
-    } catch (error) {
-      console.error("Failed to fetch movies:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [fetchMovies]);
 
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
