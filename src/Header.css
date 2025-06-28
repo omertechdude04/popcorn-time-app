@@ -1,0 +1,120 @@
+/* Header Container */
+header {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(16px);
+  padding: 0.8rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  border-bottom: 1px solid #00e0ff;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
+
+  /* Performance and animation fix */
+  will-change: transform, opacity;
+  transition: none !important;
+  animation: none !important;
+  transform-style: flat;
+}
+
+/* Centered Menu Container */
+.menu-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-container img {
+  width: 100px;
+  margin-right: 2.5rem; /* space between logo and nav */
+}
+
+/* Menu Content */
+.menu-content {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Nav Link Buttons */
+.menu-content li a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #cfcfcf;
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.menu-content a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Icon Styling */
+.menu-content li a .material-symbols-outlined {
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+/* Hover & Active */
+.menu-content li a:hover,
+.menu-content li a.active {
+  background: rgba(0, 224, 255, 0.12);
+  border-color: #00e0ff;
+  color: #00e0ff;
+  box-shadow: 0 0 8px #00e0ff55, inset 0 0 6px #00e0ff22;
+  text-shadow: 0 0 4px #00e0ff;
+}
+
+.menu-content li a:hover .material-symbols-outlined,
+.menu-content li a.active .material-symbols-outlined {
+  color: #00e0ff;
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 0.5rem 0.8rem;
+    text-align: center;
+  }
+
+  .menu-container {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .menu-container img {
+    width: 100px;
+    margin: 0 0 0.5rem 30px;
+  }
+
+  .menu-content {
+    flex-direction: row;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .menu-content li a {
+    font-size: 0.45rem;
+    padding: 0.35rem 0.8rem;
+    justify-content: center;
+    width: auto;
+  }
+
+  .menu-content li a .material-symbols-outlined {
+    font-size: 0.9rem;
+  }
+}
+
