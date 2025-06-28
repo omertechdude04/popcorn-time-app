@@ -16,16 +16,19 @@ export default function Movies() {
   const [selectedYear, setSelectedYear] = useState("");
   const [hasMore, setHasMore] = useState(true);
 
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     async function fetchGenres() {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`
-      );
-      const data = await res.json();
-      setGenres(data.genres);
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`
+        );
+        const data = await res.json();
+        setGenres(data.genres);
+      } catch (error) {
+        console.error("Failed to fetch genres:", error);
+      }
     }
     fetchGenres();
   }, []);
@@ -36,18 +39,17 @@ export default function Movies() {
       try {
         const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
         const yearParam = selectedYear ? `&primary_release_year=${selectedYear}` : "";
+        const currentPage = reset ? 1 : page;
 
         const res = await fetch(
-          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=primary_release_date.desc&page=${
-            reset ? 1 : page
-          }${genreParam}${yearParam}&vote_count.gte=500&primary_release_date.lte=${todayStr}`
+          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=primary_release_date.desc&page=${currentPage}${genreParam}${yearParam}&vote_count.gte=500&primary_release_date.lte=${todayStr}`
         );
         const data = await res.json();
 
         const filtered = data.results.filter(
           (movie) =>
             movie.release_date &&
-            new Date(movie.release_date) <= today &&
+            new Date(movie.release_date) <= new Date() &&
             movie.poster_path
         );
 
@@ -66,7 +68,7 @@ export default function Movies() {
         setLoading(false);
       }
     },
-    [selectedGenre, selectedYear, page, todayStr, today]
+    [selectedGenre, selectedYear, page, todayStr]
   );
 
   useEffect(() => {

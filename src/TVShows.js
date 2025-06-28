@@ -1,7 +1,6 @@
-// TVShows.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import "./TVShows.css"; // Reuse same styles
+import "./TVShows.css";
 import LoadingScreen from "./LoadingScreen";
 import Header from "./Header";
 
@@ -17,61 +16,64 @@ export default function TVShows() {
   const [selectedYear, setSelectedYear] = useState("");
   const [hasMore, setHasMore] = useState(true);
 
-  const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = new Date().toISOString().split("T")[0];
 
-  // Fetch genres on first load
   useEffect(() => {
     async function fetchGenres() {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}`
-      );
-      const data = await res.json();
-      setGenres(data.genres);
+      try {
+        const res = await fetch(
+          `https://api.themoviedb.org/3/genre/tv/list?api_key=${API_KEY}`
+        );
+        const data = await res.json();
+        setGenres(data.genres);
+      } catch (error) {
+        console.error("Failed to fetch genres:", error);
+      }
     }
     fetchGenres();
   }, []);
 
-  // Fetch TV shows initially and on filter change
+  const fetchShows = useCallback(
+    async (reset = false) => {
+      setLoading(true);
+      try {
+        const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
+        const yearParam = selectedYear ? `&first_air_date_year=${selectedYear}` : "";
+        const currentPage = reset ? 1 : page;
+
+        const res = await fetch(
+          `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&sort_by=first_air_date.desc&page=${currentPage}${genreParam}${yearParam}&vote_count.gte=200&first_air_date.lte=${todayStr}`
+        );
+        const data = await res.json();
+
+        const filtered = data.results.filter(
+          (show) =>
+            show.first_air_date &&
+            new Date(show.first_air_date) <= new Date() &&
+            show.poster_path
+        );
+
+        if (reset) {
+          setShows(filtered);
+          setPage(2);
+        } else {
+          setShows((prev) => [...prev, ...filtered]);
+          setPage((prev) => prev + 1);
+        }
+
+        setHasMore(data.page < data.total_pages);
+      } catch (error) {
+        console.error("Failed to fetch TV shows:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedGenre, selectedYear, page, todayStr]
+  );
+
   useEffect(() => {
     fetchShows(true);
-  }, [selectedGenre, selectedYear]);
-
-  const fetchShows = async (reset = false) => {
-    setLoading(true);
-    try {
-      const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
-      const yearParam = selectedYear ? `&first_air_date_year=${selectedYear}` : "";
-
-      const res = await fetch(
-        `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&sort_by=first_air_date.desc&page=${
-          reset ? 1 : page
-        }${genreParam}${yearParam}&vote_count.gte=200&first_air_date.lte=${todayStr}`
-      );
-      const data = await res.json();
-
-      const filtered = data.results.filter(
-        (show) =>
-          show.first_air_date &&
-          new Date(show.first_air_date) <= today &&
-          show.poster_path
-      );
-
-      if (reset) {
-        setShows(filtered);
-        setPage(2);
-      } else {
-        setShows((prev) => [...prev, ...filtered]);
-        setPage((prev) => prev + 1);
-      }
-
-      setHasMore(data.page < data.total_pages);
-    } catch (error) {
-      console.error("Failed to fetch TV shows:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [fetchShows]);
 
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
