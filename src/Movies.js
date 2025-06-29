@@ -34,15 +34,14 @@ export default function Movies() {
   }, []);
 
   const fetchMovies = useCallback(
-    async (reset = false) => {
+    async (reset = false, customPage = 1) => {
       setLoading(true);
       try {
         const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
         const yearParam = selectedYear ? `&primary_release_year=${selectedYear}` : "";
-        const currentPage = reset ? 1 : page;
 
         const res = await fetch(
-          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=primary_release_date.desc&page=${currentPage}${genreParam}${yearParam}&vote_count.gte=500&primary_release_date.lte=${todayStr}`
+          `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=primary_release_date.desc&page=${customPage}${genreParam}${yearParam}&vote_count.gte=500&primary_release_date.lte=${todayStr}`
         );
         const data = await res.json();
 
@@ -55,7 +54,7 @@ export default function Movies() {
 
         if (reset) {
           setMovies(filtered);
-          setPage(2);
+          setPage(2); // next page for future load more
         } else {
           setMovies((prev) => [...prev, ...filtered]);
           setPage((prev) => prev + 1);
@@ -68,21 +67,23 @@ export default function Movies() {
         setLoading(false);
       }
     },
-    [selectedGenre, selectedYear, page, todayStr]
+    [selectedGenre, selectedYear, todayStr]
   );
 
   useEffect(() => {
-    fetchMovies(true);
+    fetchMovies(true, 1);
   }, [fetchMovies]);
 
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
     setPage(1);
+    fetchMovies(true, 1);
   };
 
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);
     setPage(1);
+    fetchMovies(true, 1);
   };
 
   return (
@@ -135,8 +136,11 @@ export default function Movies() {
             ))}
           </div>
 
-          {hasMore && (
-            <button className="load-more" onClick={() => fetchMovies(false)}>
+          {hasMore && !loading && (
+            <button
+              className="load-more"
+              onClick={() => fetchMovies(false, page)}
+            >
               Load More
             </button>
           )}
