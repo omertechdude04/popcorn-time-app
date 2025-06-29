@@ -34,15 +34,14 @@ export default function TVShows() {
   }, []);
 
   const fetchShows = useCallback(
-    async (reset = false) => {
+    async (reset = false, customPage = 1) => {
       setLoading(true);
       try {
         const genreParam = selectedGenre ? `&with_genres=${selectedGenre}` : "";
         const yearParam = selectedYear ? `&first_air_date_year=${selectedYear}` : "";
-        const currentPage = reset ? 1 : page;
 
         const res = await fetch(
-          `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&sort_by=first_air_date.desc&page=${currentPage}${genreParam}${yearParam}&vote_count.gte=200&first_air_date.lte=${todayStr}`
+          `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&sort_by=first_air_date.desc&page=${customPage}${genreParam}${yearParam}&vote_count.gte=200&first_air_date.lte=${todayStr}`
         );
         const data = await res.json();
 
@@ -55,7 +54,7 @@ export default function TVShows() {
 
         if (reset) {
           setShows(filtered);
-          setPage(2);
+          setPage(2); // next page
         } else {
           setShows((prev) => [...prev, ...filtered]);
           setPage((prev) => prev + 1);
@@ -68,21 +67,23 @@ export default function TVShows() {
         setLoading(false);
       }
     },
-    [selectedGenre, selectedYear, page, todayStr]
+    [selectedGenre, selectedYear, todayStr]
   );
 
   useEffect(() => {
-    fetchShows(true);
+    fetchShows(true, 1);
   }, [fetchShows]);
 
   const handleGenreChange = (e) => {
     setSelectedGenre(e.target.value);
     setPage(1);
+    fetchShows(true, 1);
   };
 
   const handleYearChange = (e) => {
     setSelectedYear(e.target.value);
     setPage(1);
+    fetchShows(true, 1);
   };
 
   return (
@@ -135,8 +136,8 @@ export default function TVShows() {
             ))}
           </div>
 
-          {hasMore && (
-            <button className="load-more" onClick={() => fetchShows(false)}>
+          {hasMore && !loading && (
+            <button className="load-more" onClick={() => fetchShows(false, page)}>
               Load More
             </button>
           )}
