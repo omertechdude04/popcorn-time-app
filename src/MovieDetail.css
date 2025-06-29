@@ -163,7 +163,7 @@ header {
 .rating-section {
   margin-top: 1.5rem;
   display: flex;
-  align-items: left;
+  align-items: center;
   gap: 12px;
 }
 
@@ -477,9 +477,9 @@ header {
     font-size: 0.95rem;
     margin-bottom: 1rem;
   }
-
+  
   .rating-section {
-    justify-content: center;
+    justify-content: left;
     margin-top: 1rem;
   }
 
