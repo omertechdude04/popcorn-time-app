@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #000;">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/popcorntimefavicon.ico" />
@@ -13,55 +13,9 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/popcorntimefavicon.ico" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>Popcorn Time</title>
-
-    <style>
-      /* Optional inline fallback styles */
-      body {
-        margin: 0;
-        background-color: #000;
-        overflow: hidden;
-      }
-
-      #preloader {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-
-      #preloader img {
-        width: 120px;
-        height: auto;
-      }
-    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-
-    <!-- Preloader Splash Screen -->
-    <div id="preloader">
-      <img src="%PUBLIC_URL%/popcorntimelogo.png" alt="Loading..." />
-    </div>
-
-    <!-- React App Root -->
-    <div id="root" style="display: none;"></div>
-
-    <!-- Script to remove splash once React loads -->
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        const root = document.getElementById('root');
-        const preloader = document.getElementById('preloader');
-        if (preloader && root) {
-          preloader.style.display = 'none';
-          root.style.display = 'block';
-        }
-      });
-    </script>
+    <div id="root"></div>
   </body>
 </html>
