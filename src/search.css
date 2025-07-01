@@ -142,17 +142,25 @@
   margin-top: 3rem;
   font-size: 1.2rem;
 }
+
 .mic-button {
   background: none;
   border: none;
-  font-size: 1.5rem;
   cursor: pointer;
   margin-left: 8px;
-  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0;
 }
 
-.mic-button:active {
-  transform: scale(1.2);
+.mic-button svg {
+  fill: white;
+  width: 24px;
+  height: 24px;
+}
+
+.mic-button:active svg {
+  transform: scale(1.1);
 }
 
 
