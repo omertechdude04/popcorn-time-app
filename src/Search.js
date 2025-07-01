@@ -189,31 +189,33 @@ export default function Search() {
 
       <form className="search-form" onSubmit={handleSearch}>
         <div className="search-autocomplete">
-          <input
-            type="text"
-            placeholder="Search for movies, TV shows, actors or directors..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="search-input"
-            autoComplete="off"
-          />
-          <button
-            type="button"
-            className="mic-button"
-            onClick={startListening}
-            title="Search by voice"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="white"
-              viewBox="0 0 24 24"
+          <div className="search-input-wrapper">
+            <input
+              type="text"
+              placeholder="Search for movies, TV shows, actors or directors..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="search-input"
+              autoComplete="off"
+            />
+            <button
+              type="button"
+              className="mic-button"
+              onClick={startListening}
+              title="Search by voice"
             >
-              <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3z"></path>
-              <path d="M19 11a1 1 0 10-2 0 5 5 0 01-10 0 1 1 0 10-2 0 7 7 0 006 6.92V21H9a1 1 0 100 2h6a1 1 0 100-2h-3v-3.08A7 7 0 0019 11z"></path>
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="white"
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3z"></path>
+                <path d="M19 11a1 1 0 10-2 0 5 5 0 01-10 0 1 1 0 10-2 0 7 7 0 006 6.92V21H9a1 1 0 100 2h6a1 1 0 100-2h-3v-3.08A7 7 0 0019 11z"></path>
+              </svg>
+            </button>
+          </div>
           {suggestions.length > 0 && (
             <ul className="autocomplete-list">
               {suggestions.map((item) => (
@@ -223,9 +225,7 @@ export default function Search() {
                   className="autocomplete-item"
                 >
                   {item.title || item.name}
-                  <span className="autocomplete-type">
-                    ({item.media_type})
-                  </span>
+                  <span className="autocomplete-type">({item.media_type})</span>
                 </li>
               ))}
             </ul>
