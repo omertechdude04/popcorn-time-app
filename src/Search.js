@@ -15,15 +15,18 @@ export default function Search() {
   const [results, setResults] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [listening, setListening] = useState(false);
 
-  // Fetch results on mount if URL has query param
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
   useEffect(() => {
     if (queryParam) {
       fetchResults(queryParam);
     }
   }, [queryParam]);
 
-  // Suggestion autocomplete
   useEffect(() => {
     if (query.length < 2) {
       setSuggestions([]);
@@ -33,13 +36,17 @@ export default function Search() {
     const fetchSuggestions = async () => {
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=1&include_adult=false`
+          `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(
+            query
+          )}&page=1&include_adult=false`
         );
         const data = await res.json();
 
         const filtered = data.results.filter(
           (item) =>
-            (item.media_type === "movie" || item.media_type === "tv" || item.media_type === "person") &&
+            (item.media_type === "movie" ||
+              item.media_type === "tv" ||
+              item.media_type === "person") &&
             (item.title || item.name)
         );
 
@@ -53,21 +60,21 @@ export default function Search() {
     return () => clearTimeout(delayDebounce);
   }, [query]);
 
-  // Handle search submission
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!query.trim()) return;
     navigate(`/search?q=${encodeURIComponent(query)}`);
   };
 
-  // Fetch search results
   const fetchResults = async (searchQuery) => {
     setLoading(true);
     setResults([]);
 
     try {
       const res = await fetch(
-        `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(searchQuery)}&page=1&include_adult=false`
+        `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(
+          searchQuery
+        )}&page=1&include_adult=false`
       );
       const data = await res.json();
 
@@ -78,7 +85,9 @@ export default function Search() {
       );
 
       const directorMatch = data.results.find(
-        (item) => item.media_type === "person" && item.known_for_department === "Directing"
+        (item) =>
+          item.media_type === "person" &&
+          item.known_for_department === "Directing"
       );
 
       let directedCredits = [];
@@ -97,7 +106,9 @@ export default function Search() {
       }
 
       const actorMatch = data.results.find(
-        (item) => item.media_type === "person" && item.known_for_department === "Acting"
+        (item) =>
+          item.media_type === "person" &&
+          item.known_for_department === "Acting"
       );
 
       let actingCredits = [];
@@ -114,10 +125,17 @@ export default function Search() {
         );
       }
 
-      const combined = [...movieAndTVResults, ...directedCredits, ...actingCredits];
+      const combined = [
+        ...movieAndTVResults,
+        ...directedCredits,
+        ...actingCredits,
+      ];
       const uniqueResults = combined.filter(
         (item, index, self) =>
-          index === self.findIndex((t) => t.id === item.id && t.media_type === item.media_type)
+          index ===
+          self.findIndex(
+            (t) => t.id === item.id && t.media_type === item.media_type
+          )
       );
 
       setResults(uniqueResults);
@@ -137,6 +155,32 @@ export default function Search() {
     setSuggestions([]);
   };
 
+  const startListening = () => {
+    if (!recognition) {
+      alert("Voice recognition not supported in this browser.");
+      return;
+    }
+
+    recognition.start();
+    setListening(true);
+
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      setQuery(speechResult);
+      setListening(false);
+      navigate(`/search?q=${encodeURIComponent(speechResult)}`);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      setListening(false);
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+    };
+  };
+
   return (
     <div className="search-page">
       <Header />
@@ -153,6 +197,14 @@ export default function Search() {
             className="search-input"
             autoComplete="off"
           />
+          <button
+            type="button"
+            className="mic-button"
+            onClick={startListening}
+            title="Search by voice"
+          >
+            🎤
+          </button>
           {suggestions.length > 0 && (
             <ul className="autocomplete-list">
               {suggestions.map((item) => (
@@ -162,7 +214,9 @@ export default function Search() {
                   className="autocomplete-item"
                 >
                   {item.title || item.name}
-                  <span className="autocomplete-type">({item.media_type})</span>
+                  <span className="autocomplete-type">
+                    ({item.media_type})
+                  </span>
                 </li>
               ))}
             </ul>
