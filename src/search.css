@@ -142,3 +142,17 @@
   margin-top: 3rem;
   font-size: 1.2rem;
 }
+.mic-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 8px;
+  color: #fff;
+}
+
+.mic-button:active {
+  transform: scale(1.2);
+}
+
+
