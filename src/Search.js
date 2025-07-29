@@ -15,18 +15,15 @@ export default function Search() {
   const [results, setResults] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [listening, setListening] = useState(false);
 
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = SpeechRecognition ? new SpeechRecognition() : null;
-
+  // Fetch results on mount if URL has query param
   useEffect(() => {
     if (queryParam) {
       fetchResults(queryParam);
     }
   }, [queryParam]);
 
+  // Suggestion autocomplete
   useEffect(() => {
     if (query.length < 2) {
       setSuggestions([]);
@@ -36,17 +33,13 @@ export default function Search() {
     const fetchSuggestions = async () => {
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(
-            query
-          )}&page=1&include_adult=false`
+          `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=1&include_adult=false`
         );
         const data = await res.json();
 
         const filtered = data.results.filter(
           (item) =>
-            (item.media_type === "movie" ||
-              item.media_type === "tv" ||
-              item.media_type === "person") &&
+            (item.media_type === "movie" || item.media_type === "tv" || item.media_type === "person") &&
             (item.title || item.name)
         );
 
@@ -60,21 +53,21 @@ export default function Search() {
     return () => clearTimeout(delayDebounce);
   }, [query]);
 
+  // Handle search submission
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!query.trim()) return;
     navigate(`/search?q=${encodeURIComponent(query)}`);
   };
 
+  // Fetch search results
   const fetchResults = async (searchQuery) => {
     setLoading(true);
     setResults([]);
 
     try {
       const res = await fetch(
-        `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(
-          searchQuery
-        )}&page=1&include_adult=false`
+        `https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(searchQuery)}&page=1&include_adult=false`
       );
       const data = await res.json();
 
@@ -85,9 +78,7 @@ export default function Search() {
       );
 
       const directorMatch = data.results.find(
-        (item) =>
-          item.media_type === "person" &&
-          item.known_for_department === "Directing"
+        (item) => item.media_type === "person" && item.known_for_department === "Directing"
       );
 
       let directedCredits = [];
@@ -106,9 +97,7 @@ export default function Search() {
       }
 
       const actorMatch = data.results.find(
-        (item) =>
-          item.media_type === "person" &&
-          item.known_for_department === "Acting"
+        (item) => item.media_type === "person" && item.known_for_department === "Acting"
       );
 
       let actingCredits = [];
@@ -125,17 +114,10 @@ export default function Search() {
         );
       }
 
-      const combined = [
-        ...movieAndTVResults,
-        ...directedCredits,
-        ...actingCredits,
-      ];
+      const combined = [...movieAndTVResults, ...directedCredits, ...actingCredits];
       const uniqueResults = combined.filter(
         (item, index, self) =>
-          index ===
-          self.findIndex(
-            (t) => t.id === item.id && t.media_type === item.media_type
-          )
+          index === self.findIndex((t) => t.id === item.id && t.media_type === item.media_type)
       );
 
       setResults(uniqueResults);
@@ -155,32 +137,6 @@ export default function Search() {
     setSuggestions([]);
   };
 
-  const startListening = () => {
-    if (!recognition) {
-      alert("Voice recognition not supported in this browser.");
-      return;
-    }
-
-    recognition.start();
-    setListening(true);
-
-    recognition.onresult = (event) => {
-      const speechResult = event.results[0][0].transcript;
-      setQuery(speechResult);
-      setListening(false);
-      navigate(`/search?q=${encodeURIComponent(speechResult)}`);
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Speech recognition error:", event.error);
-      setListening(false);
-    };
-
-    recognition.onend = () => {
-      setListening(false);
-    };
-  };
-
   return (
     <div className="search-page">
       <Header />
@@ -189,33 +145,14 @@ export default function Search() {
 
       <form className="search-form" onSubmit={handleSearch}>
         <div className="search-autocomplete">
-          <div className="search-input-wrapper">
-            <input
-              type="text"
-              placeholder="Search for movies, TV shows, actors or directors..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="search-input"
-              autoComplete="off"
-            />
-            <button
-              type="button"
-              className="mic-button"
-              onClick={startListening}
-              title="Search by voice"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="white"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3z"></path>
-                <path d="M19 11a1 1 0 10-2 0 5 5 0 01-10 0 1 1 0 10-2 0 7 7 0 006 6.92V21H9a1 1 0 100 2h6a1 1 0 100-2h-3v-3.08A7 7 0 0019 11z"></path>
-              </svg>
-            </button>
-          </div>
+          <input
+            type="text"
+            placeholder="Search for movies, TV shows, actors or directors..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="search-input"
+            autoComplete="off"
+          />
           {suggestions.length > 0 && (
             <ul className="autocomplete-list">
               {suggestions.map((item) => (
