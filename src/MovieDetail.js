@@ -283,7 +283,7 @@ export default function MovieDetail() {
         navigator.share({
           title: movie.title,
           text: `Check out "${movie.title}"!`,
-          url: window.location.href,
+          url: `${window.location.origin}/movies/${movie.id}`
         });
       } else {
         alert("Sharing not supported on this browser.");
