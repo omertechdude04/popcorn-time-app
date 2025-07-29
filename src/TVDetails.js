@@ -201,7 +201,7 @@ export default function TvShowDetail() {
         navigator.share({
           title: show.title,
           text: `Check out "${show.title}"!`,
-          url: window.location.href,
+          url: `${window.location.origin}/tv/${show.id}`,
         });
       } else {
         alert("Sharing not supported on this browser.");
