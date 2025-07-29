@@ -440,6 +440,46 @@ header {
   margin-bottom: 20px;
 }
 
+/* Container to align the share button to the right */
+.share-button-container {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 40px; /* Adjust this value to move it more/less to the right */
+}
+
+/* The share button style */
+.icon-share-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: black;
+  border: 2px solid #00e0ff;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect for the button */
+.icon-share-button:hover {
+  box-shadow: 0 6px 18px rgba(0, 224, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+/* SVG icon styling */
+.share-icon {
+  width: 20px;
+  height: 20px;
+  stroke: white;
+}
+
+
+
+
 @media (max-width: 480px) {
   .movie-detail {
     padding: 1.5rem;
@@ -477,9 +517,9 @@ header {
     font-size: 0.95rem;
     margin-bottom: 1rem;
   }
-  
+
   .rating-section {
-    justify-content: left;
+    justify-content: center;
     margin-top: 1rem;
   }
 
@@ -552,8 +592,8 @@ header {
     top: auto;
     bottom: 20px;
     right: 20px;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
   }
 
   .director-box {
