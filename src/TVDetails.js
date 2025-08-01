@@ -4,6 +4,16 @@ import "./MovieDetail.css";
 import Header from './Header';
 import LoadingScreen from "./LoadingScreen"; 
 
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+
 
 const API_KEY = "ecf26f78d899754853efc76e880258b3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
@@ -194,37 +204,41 @@ export default function TvShowDetail() {
           </div>
         </div>
           <div className="share-button-container">
-  <button
-    className="icon-share-button"
-    onClick={() => {
-      if (navigator.share) {
-        navigator.share({
-          title: show.title,
-          text: `Check out "${show.title}"!`,
-          url: `${window.location.origin}/tv/${show.id}`,
-        });
-      } else {
-        alert("Sharing not supported on this browser.");
-      }
-    }}
-    aria-label="Share"
+            <button
+  className="icon-share-button"
+  onClick={() => {
+    const shareUrl = `${window.location.origin}/tvshow/${show.id}-${slugify(show.name)}`;
+    if (navigator.share) {
+      navigator.share({
+        title: show.name,
+        text: `Check out "${show.name}"!`,
+        url: shareUrl,
+      });
+    } else {
+      navigator.clipboard.writeText(shareUrl)
+        .then(() => alert("Link copied to clipboard!"))
+        .catch(() => alert("Could not copy the link."));
+    }
+  }}
+  aria-label="Share"
+>
+  <span className="share-label">SHARE</span>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="share-icon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
-    <span className="share-label">SHARE</span>
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="share-icon"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
-      <polyline points="16 6 12 2 8 6" />
-      <line x1="12" y1="2" x2="12" y2="15" />
-    </svg>
-  </button>
+    <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+    <polyline points="16 6 12 2 8 6" />
+    <line x1="12" y1="2" x2="12" y2="15" />
+  </svg>
+</button>
+
 </div>
 
         {trailer && (
