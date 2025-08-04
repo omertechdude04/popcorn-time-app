@@ -1,0 +1,124 @@
+.mylist-container {
+  padding: 2rem;
+  background-color: black;
+  color: white;
+  min-height: 100vh;
+}
+
+.mylist-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.empty-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: white;
+  margin-top: 4rem;
+}
+
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.list-item {
+  background-color: black;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+}
+
+.list-item:hover {
+  transform: scale(1.03);
+}
+
+.item-poster {
+  width: 100%;
+  height: 270px;
+  object-fit: cover;
+}
+
+.item-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.item-info h3 {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: #fff;
+}
+
+.release-date {
+  font-size: 0.9rem;
+  color: #ffcc00;
+  margin-top: 8px;
+}
+
+.coming-soon {
+  color: #ff5555;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.item-info button {
+  padding: 0.5rem 1rem;
+  background-color: #e50914;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.item-info button:hover {
+  background-color: #c40812;
+}
+
+@media (max-width: 600px) {
+  .mylist-container {
+    padding: 1rem;
+  }
+
+  .mylist-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .empty-message {
+    font-size: 1rem;
+    margin-top: 2rem;
+  }
+
+  .list-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .item-poster {
+    height: 200px;
+  }
+
+  .item-info h3 {
+    font-size: 0.9rem;
+  }
+
+  .release-date {
+    font-size: 0.8rem;
+  }
+
+  .item-info button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}
