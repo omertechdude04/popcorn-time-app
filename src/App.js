@@ -6,11 +6,12 @@ import MovieDetail from "./MovieDetail";
 import ActorDetail from "./ActorDetail";
 import TvShowDetail from "./TVDetails";
 import Movies from "./Movies";
-import TVShows from "./TVShows"; // ✅ NEW
+import TVShows from "./TVShows";
 import LoadingScreen from "./LoadingScreen";
 import Search from "./Search";
 import "./index.css";
 import DirectorInfo from "./DirectorInfo";
+import MyList from "./MyList";
 
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
       <Route path="/tvshows" element={<TVShows />} />
       <Route path="/search" element={<Search />} />
       <Route path="/director/:id" element={<DirectorInfo />} />
+      <Route path="/mylist" element={<MyList />} />
     </Routes>
   </>
 </Router>
