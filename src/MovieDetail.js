@@ -119,6 +119,7 @@ export default function MovieDetail() {
       }
     }
 
+
     fetchDetails();
   }, [id]);
 
@@ -131,11 +132,31 @@ export default function MovieDetail() {
   const daysSinceRelease = (today - releaseDate) / (1000 * 60 * 60 * 24);
   const hasStreaming = watchProviders?.flatrate || watchProviders?.buy || watchProviders?.rent;
 
+     const addToMyList = (movie) => {
+  const savedList = JSON.parse(localStorage.getItem("myList")) || [];
+  if (!savedList.find(item => item.id === movie.id)) {
+    // Save only what you need
+  const movieToSave = {
+    id: movie.id,
+    title: movie.title,
+    poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "/nopicture.jpg",
+    releaseDate: movie.release_date || null
+  };
+
+    savedList.push(movieToSave);
+    localStorage.setItem("myList", JSON.stringify(savedList));
+    alert(`${movie.title} added to your list!`);
+  } else {
+    alert(`${movie.title} is already in your list.`);
+  }
+};
+
   return (
     <>
       <Header />
       
       <button className="back-button" onClick={() => navigate(-1)}>Go Back</button>
+
   
       
       <div className="movie-detail">
@@ -148,7 +169,20 @@ export default function MovieDetail() {
           />
           
           <div className="detail-info">
-            <h1>{movie.title} ({movie.release_date?.slice(0, 4) || "N/A"})</h1>
+          <h1>{movie.title} ({movie.release_date?.slice(0, 4) || "N/A"})</h1>
+          <button onClick={() => addToMyList(movie)} className="add-to-list-button">
+            ➕ Add to My List
+          </button>
+
+          {releaseDate > today && (
+            <p className="upcoming-release">
+              🎉 Coming Soon on {releaseDate.toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          )}
             <p className="genres">{genres}</p>
             <p><strong>Runtime:</strong> {movie.runtime ? `${movie.runtime} min` : "Unknown"}</p>
             <div className="director-box">
@@ -168,7 +202,7 @@ export default function MovieDetail() {
               )}
 
             </div>
-                
+            
 
 
             <p><strong>Cast:</strong></p>
@@ -283,7 +317,7 @@ export default function MovieDetail() {
         navigator.share({
           title: movie.title,
           text: `Check out "${movie.title}"!`,
-          url: `${window.location.origin}/movie/${movie.id}/${slugify(movie.title)}`
+        url: `${window.location.origin}/movie/${movie.id}/${slugify(movie.title)}`
         });
       } else {
         alert("Sharing not supported on this browser.");
