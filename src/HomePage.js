@@ -2,16 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./index.css";
 import Header from "./Header";
+import ReminderPopup from "./ReminderPopup"; // Adjust path if it's in another folder
+
 
 const API_KEY = "ecf26f78d899754853efc76e880258b3";
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
+
+
 
 export default function HomePage() {
   const [popularMovies, setPopularMovies] = useState([]);
   const [popularShows, setPopularShows] = useState([]);
   const [newEpisodes, setNewEpisodes] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -122,9 +127,13 @@ export default function HomePage() {
     );
   }
 
+
+
   return (
     <>
+      <ReminderPopup />
       <Header />
+
 
       <section className="hero">
         <div className="hero-content">
