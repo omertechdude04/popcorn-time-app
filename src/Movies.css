@@ -1,6 +1,11 @@
 /* Base styles for the movies page */
+
+html, body {
+  background-image: linear-gradient(to right, #000000, rgb(1, 1, 12), rgb(0, 0, 19), black);
+}
+
 .movies-page {
-  background-color: #000;
+  background-image: linear-gradient(to right, #000000, rgb(1, 1, 12), rgb(0, 0, 19), black);
   color: #fff;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
