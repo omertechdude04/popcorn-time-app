@@ -90,6 +90,36 @@ export default function TvShowDetail() {
   const [watchProviders, setWatchProviders] = useState(null);
   const [recommended, setRecommended] = useState([]);
   const navigate = useNavigate();
+  const handleAddToList = () => {
+  const existingList = JSON.parse(localStorage.getItem("myList")) || [];
+
+  if (existingList.some(item => item.id === show.id && item.type === "tv")) {
+    alert("This show is already in your list.");
+    return;
+  }
+
+  const nextEpisode = show.next_episode_to_air;
+
+  const newItem = {
+    id: show.id,
+    type: "tv",
+    name: show.name,
+    title: show.name,
+    poster_path: show.poster_path,
+    releaseDate: nextEpisode?.air_date || null,
+    episodeName: nextEpisode?.name || null,
+    season: nextEpisode?.season_number || null,
+    episode: nextEpisode?.episode_number || null,
+    nextEpisodeInfo: nextEpisode
+      ? `S${nextEpisode.season_number}E${nextEpisode.episode_number} - "${nextEpisode.name}" airing on ${nextEpisode.air_date}`
+      : "No upcoming episode"
+  };
+
+  localStorage.setItem("myList", JSON.stringify([...existingList, newItem]));
+  alert(`${show.name} added to My List!`);
+};
+
+  
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -127,6 +157,9 @@ export default function TvShowDetail() {
   if (!show || !credits) return <LoadingScreen />;
 
   const creator = show.created_by?.[0];
+  const nextEpisode = show.next_episode_to_air;
+  const network = show.networks?.[0];
+
   const genres = show.genres?.map((g) => g.name).join(", ") || "N/A";
 
   const castLinks = credits.cast.slice(0, 8).map((c) => (
@@ -157,9 +190,34 @@ export default function TvShowDetail() {
           />
           <div className="detail-info">
             <h1>{show.name} ({show.first_air_date?.slice(0, 4) || "N/A"})</h1>
+              <button className="add-to-list-button" onClick={handleAddToList}>
+              ➕ Add to My List
+              </button>
             <p className="genres">{genres}</p>
             <p><strong>Seasons:</strong> {show.number_of_seasons || "N/A"}</p>
             <p><strong>Episodes:</strong> {show.number_of_episodes || "N/A"}</p>
+            {nextEpisode && (
+          <div className="next-episode-info">
+            <h3>New Episode Coming Soon</h3>
+            <p>
+              <strong>{nextEpisode.name}</strong> (S{nextEpisode.season_number}E{nextEpisode.episode_number}) airs on <strong>{nextEpisode.air_date}</strong>
+            </p>
+            {network && (
+              <div className="network-info">
+                <span>Airing on:</span>
+                <div className="network-logo-wrapper">
+                  <img
+                    src={`${LOGO_BASE_URL}${network.logo_path}`}
+                    alt={network.name}
+                    className="network-logo"
+                    title={network.name}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
             <p><strong>Creator:</strong> {creator?.name || "Unknown"}</p>
             <p><strong>Cast:</strong></p>
             <div className="cast-image-container">{castLinks}</div>
