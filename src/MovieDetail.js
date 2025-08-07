@@ -132,16 +132,25 @@ export default function MovieDetail() {
   const daysSinceRelease = (today - releaseDate) / (1000 * 60 * 60 * 24);
   const hasStreaming = watchProviders?.flatrate || watchProviders?.buy || watchProviders?.rent;
 
-     const addToMyList = (movie) => {
+const isComingSoon = (date) => {
+  if (!date) return false;
+  const today = new Date();
+  const release = new Date(date);
+  return release > today;
+};
+
+const addToMyList = (movie) => {
   const savedList = JSON.parse(localStorage.getItem("myList")) || [];
+
   if (!savedList.find(item => item.id === movie.id)) {
-    // Save only what you need
-  const movieToSave = {
-    id: movie.id,
-    title: movie.title,
-    poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "/nopicture.jpg",
-    releaseDate: movie.release_date || null
-  };
+    const movieToSave = {
+      id: movie.id,
+      title: movie.title,
+      poster: movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : "/nopicture.jpg",
+      ...(isComingSoon(movie.release_date) && { release_date: movie.release_date })
+    };
 
     savedList.push(movieToSave);
     localStorage.setItem("myList", JSON.stringify(savedList));
@@ -150,6 +159,7 @@ export default function MovieDetail() {
     alert(`${movie.title} is already in your list.`);
   }
 };
+
 
   return (
     <>
