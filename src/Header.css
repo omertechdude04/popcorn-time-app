@@ -1,120 +1,112 @@
-/* Header Container */
-header {
-  background: rgba(10, 10, 10, 0.7);
-  backdrop-filter: blur(16px);
-  padding: 0.8rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 10000;
-  border-bottom: 1px solid #00e0ff;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
-
-  /* Performance and animation fix */
-  will-change: transform, opacity;
-  transition: none !important;
-  animation: none !important;
-  transform-style: flat;
+/* Base Reset */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
 }
 
-/* Centered Menu Container */
-.menu-container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* Sidebar Container */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 220px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+}
+
+/* Hide sidebar when closed */
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+/* Hamburger Button (always visible) */
+.menu-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1.8rem;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  transition: background 0.2s ease;
+}
+
+.menu-toggle:hover {
+  background: none;
+}
+
+/* Logo */
+.logo-link {
   display: flex;
   justify-content: center;
+  margin-bottom: 2rem;
 }
 
-.menu-container img {
-  width: 100px;
-  margin-right: 2.5rem; /* space between logo and nav */
+.logo {
+  max-width: 100px;
+  height: auto;
 }
 
-/* Menu Content */
-.menu-content {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+/* Navigation */
+.nav-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-/* Nav Link Buttons */
-.menu-content li a {
+.nav-item {
+  margin: 0.5rem 0;
+}
+
+.nav-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1rem;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #cfcfcf;
-  font-size: 0.92rem;
-  font-weight: 500;
+  padding: 0.75rem 1rem;
+  color: #fff;
   text-decoration: none;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  border-radius: 8px;
+  transition: background 0.2s ease;
 }
 
-.menu-content a {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Icon Styling */
-.menu-content li a .material-symbols-outlined {
+.nav-link.active {
+  background: rgba(255, 255, 255, 0.3);
+  font-weight: bold;
+}
+
+/* Icons and Labels */
+.nav-icon {
   font-size: 1.2rem;
-  transition: color 0.3s ease;
+  margin-right: 1rem;
 }
 
-/* Hover & Active */
-.menu-content li a:hover,
-.menu-content li a.active {
-  background: rgba(0, 224, 255, 0.12);
-  border-color: #00e0ff;
-  color: #00e0ff;
-  box-shadow: 0 0 8px #00e0ff55, inset 0 0 6px #00e0ff22;
-  text-shadow: 0 0 4px #00e0ff;
+.nav-label {
+  font-size: 0.95rem;
 }
 
-.menu-content li a:hover .material-symbols-outlined,
-.menu-content li a.active .material-symbols-outlined {
-  color: #00e0ff;
-}
-
-@media (max-width: 480px) {
-  header {
-    padding: 0.5rem 0.8rem;
-    text-align: center;
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 180px;
   }
 
-  .menu-container {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .menu-container img {
-    width: 100px;
-    margin: 0 0 0.5rem 30px;
-  }
-
-  .menu-content {
-    flex-direction: row;
-    gap: 0.25rem;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .menu-content li a {
-    font-size: 0.45rem;
-    padding: 0.35rem 0.8rem;
-    justify-content: center;
-    width: auto;
-  }
-
-  .menu-content li a .material-symbols-outlined {
-    font-size: 0.9rem;
+  .nav-label {
+    font-size: 0.85rem;
   }
 }
-
