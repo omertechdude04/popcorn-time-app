@@ -1,103 +1,123 @@
-.mylist-container {
-  padding: 2rem;
-  background-color: black;
-  color: white;
-  min-height: 100vh;
+/* General Page Styling */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0d0d0d;
+  color: #f0f0f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Container */
+.mylist-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Heading */
 .mylist-container h1 {
   font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.empty-message {
-  text-align: center;
-  font-size: 1.2rem;
+  margin-bottom: 1rem;
   color: white;
-  margin-top: 4rem;
+  text-align: center;
+  text-transform: uppercase;
 }
 
+/* Empty message */
+.empty-message {
+  font-size: 1.2rem;
+  text-align: center;
+  color: white;
+  margin-top: 3rem;
+}
+
+/* Grid Layout */
 .list-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1.5rem;
+  padding-top: 1rem;
 }
 
-.list-item {
-  background-color: black;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: transform 0.3s;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid white;
-}
-
-.list-item:hover {
-  transform: scale(1.03);
-}
-
-.item-poster {
-  width: 100%;
-  height: 270px;
-  object-fit: cover;
-}
-
+/* Individual Item */
 .item-info {
+  background-color: black;
+  border-radius: 12px;
   padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
+.item-info:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Poster Image */
+.poster {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  object-fit: cover;
+  height: auto;
+  max-height: 270px;
+}
+
+/* Title */
 .item-info h3 {
-  font-size: 1rem;
+  font-size: 1.1rem;
   margin: 0.5rem 0;
   color: #fff;
 }
 
+/* Release Date */
 .release-date {
-  font-size: 0.9rem;
-  color: #ffcc00;
-  margin-top: 8px;
+  font-size: 0.95rem;
+  color: white;
+  margin-bottom: 0.3rem;
+}
+
+.out-now {
+  color: #66bb6a;
 }
 
 .coming-soon {
-  color: #ff5555;
-  font-weight: bold;
-  margin-left: 4px;
+  color: #ff7043;
 }
 
-.item-info button {
-  padding: 0.5rem 1rem;
-  background-color: #e50914;
+/* Episode Info */
+.episode-info {
+  font-size: 0.9rem;
   color: white;
+  margin-bottom: 0.5rem;
+}
+
+/* Remove Button */
+.remove-button {
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  background-color: darkred;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  color: #fff;
   cursor: pointer;
+  transition: background-color 0.3s ease;
   font-weight: bold;
-  transition: background-color 0.3s;
 }
 
-.item-info button:hover {
-  background-color: #c40812;
+.remove-button:hover {
+  background-color: #26a69a;
 }
 
+/* Responsive Design */
 @media (max-width: 600px) {
-  .mylist-container {
-    padding: 1rem;
-  }
-
   .mylist-container h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .empty-message {
-    font-size: 1rem;
-    margin-top: 2rem;
+    font-size: 2rem;
   }
 
   .list-grid {
@@ -105,20 +125,16 @@
     gap: 1rem;
   }
 
-  .item-poster {
-    height: 200px;
+  .poster {
+    max-height: 220px;
   }
 
-  .item-info h3 {
-    font-size: 0.9rem;
+  .item-info {
+    padding: 0.8rem;
   }
 
-  .release-date {
+  .remove-button {
     font-size: 0.8rem;
-  }
-
-  .item-info button {
     padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
   }
 }
