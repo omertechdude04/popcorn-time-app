@@ -21,23 +21,31 @@ export default function App() {
   const [notification, setNotification] = useState({ title: "", body: "" });
   const [tokenFound, setTokenFound] = useState(false);
 
+  // Loading screen effect
   useEffect(() => {
-    // Show loading screen for 3s
     const timer = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
+  // Request notification permission + setup Firebase Cloud Messaging
   useEffect(() => {
-    // Request permission & get FCM token
-    requestForToken(setTokenFound);
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Notifications allowed!");
+        // Get FCM token
+        requestForToken(setTokenFound);
+      } else {
+        console.warn("Notifications permission denied");
+      }
+    });
 
-    // Listen for incoming messages while app is in foreground
+    // Listen for foreground messages
     onMessageListener()
       .then((payload) => {
         console.log("Foreground push notification received:", payload);
         setNotification({
-          title: payload.notification.title,
-          body: payload.notification.body
+          title: payload.notification?.title || "",
+          body: payload.notification?.body || ""
         });
       })
       .catch((err) => console.error("Failed to receive message: ", err));
@@ -47,20 +55,10 @@ export default function App() {
     return <LoadingScreen />;
   }
 
-  useEffect(() => {
-  Notification.requestPermission().then(permission => {
-    if (permission === 'granted') {
-      console.log('Notifications allowed!');
-      // Here you'd also get the FCM token and store it
-    }
-  });
-}, []);
-
-
   return (
     <Router>
       <>
-        {/* Optional in-app notification banner */}
+        {/* In-app notification banner */}
         {notification?.title && (
           <div
             style={{
