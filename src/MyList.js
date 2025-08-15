@@ -7,7 +7,43 @@ export default function MyList() {
 
   useEffect(() => {
     const storedList = JSON.parse(localStorage.getItem("myList")) || [];
-    setMyList(storedList);
+
+    // Fetch updated info for each item
+    const fetchUpdatedList = async () => {
+      const updatedItems = await Promise.all(
+        storedList.map(async (item) => {
+          try {
+            if (item.type === "tv") {
+              // Fetch latest TV show details from TMDB
+              const res = await fetch(
+                `https://api.themoviedb.org/3/tv/${item.id}?api_key=ecf26f78d899754853efc76e880258b3&language=en-US`
+              );
+              const data = await res.json();
+
+              if (data.next_episode_to_air) {
+                return {
+                  ...item,
+                  releaseDate: data.next_episode_to_air.air_date,
+                  season: data.next_episode_to_air.season_number,
+                  episode: data.next_episode_to_air.episode_number,
+                  episodeName: data.next_episode_to_air.name,
+                };
+              }
+            }
+            // Movies or shows without future episodes remain as is
+            return item;
+          } catch (err) {
+            console.error("Error updating item:", err);
+            return item;
+          }
+        })
+      );
+
+      setMyList(updatedItems);
+      localStorage.setItem("myList", JSON.stringify(updatedItems));
+    };
+
+    fetchUpdatedList();
   }, []);
 
   const removeFromList = (id) => {
@@ -58,7 +94,8 @@ export default function MyList() {
 
                 {(item.releaseDate || item.release_date) && (
                   <p className="release-date">
-                    <strong>Release Date:</strong> {formatDate(item.releaseDate || item.release_date)}
+                    <strong>Release Date:</strong>{" "}
+                    {formatDate(item.releaseDate || item.release_date)}
                     {!isComingSoon(item.releaseDate || item.release_date) ? (
                       <span className="out-now"> (Out Now)</span>
                     ) : (
