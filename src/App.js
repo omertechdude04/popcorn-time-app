@@ -47,6 +47,16 @@ export default function App() {
     return <LoadingScreen />;
   }
 
+  useEffect(() => {
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      console.log('Notifications allowed!');
+      // Here you'd also get the FCM token and store it
+    }
+  });
+}, []);
+
+
   return (
     <Router>
       <>
