@@ -22,3 +22,9 @@ messaging.onBackgroundMessage((payload) => {
   };
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+Notification.requestPermission().then(permission => {
+  if (permission === 'granted') {
+    console.log('Notifications allowed!');
+  }
+});
